@@ -27,7 +27,7 @@ let products =[
 },
 {
     id:1004,
-    subject:" Debate",
+    subject:" Public Speaking Lessons",
     Location: "Ottowa",
     price : 360,
     availableslots: 5 ,
