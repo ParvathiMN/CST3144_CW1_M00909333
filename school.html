@@ -93,7 +93,8 @@
 
                             <!-- Quantity controls for each product -->
                             <div>
-                                <button v-on:click="updateQuantity(item, -1)" :disabled="item.quantity == 0">Remove</button>
+                                <button v-on:click="updateQuantity(item, -1)"
+                                    :disabled="item.quantity == 0">Remove</button>
                                 <span>Quantity: {{item.quantity}}</span>
                                 <button v-on:click="updateQuantity(item, 1)">Add</button>
                             </div>
@@ -225,7 +226,7 @@
                 submitForm() {
                     alert('Order submitted!');
                 },
-                
+
             },
             computed: {
                 cartItemCount() {
@@ -247,12 +248,11 @@
                         products.sort((a, b) => this.sortOrder === 'asc'
                             ? a.Location.localeCompare(b.Location)
                             : b.Location.localeCompare(a.Location));
-                    } else if (this.selectedSort === 'subject') {
-                        products.sort((a, b) => this.sortOrder === 'asc'
+                    } else if (this.selectedSort == 'subject') {
+                        products.sort((a, b) => this.sortOrder == 'asc'
                             ? a.subject.localeCompare(b.subject)
                             : b.subject.localeCompare(a.subject));
                     }
-
                     return products;
                 },
                 isOrderFormComplete() {
