@@ -14,13 +14,13 @@
 <body>
     <div id="app">
         <header>
-            <h1>{{sitename}}</h1>
+            <h1>{{ sitename }}</h1>
             <!-- Search Bar -->
             <input v-model="searchQuery" placeholder="Search for products.." />
 
             <!-- Disable checkout button when cart is empty -->
             <button v-on:click="showCheckout" v-bind:disabled="cartItemCount == 0">
-                {{cartItemCount}}
+                {{ cartItemCount }}
                 <span class="fas fa-cart-plus"> Checkout</span>
             </button>
         </header>
@@ -43,16 +43,16 @@
 
         <main>
             <div v-if="showProduct">
-                <div v-for="product in sortedProducts" :key="product.id">
+                <div v-for="product in sortedProducts" :key="product.id" v-if="matchesSearch(product)">
                     <div class="product-card">
                         <div class="image-container">
                             <img v-bind:src="product.image" alt="Product Image">
                         </div>
                         <div class="product-info">
                             <h2 v-text="product.subject"></h2>
-                            <p>Location: {{product.Location}}</p>
-                            <p>Price: ${{product.price}}</p>
-                            <p>Available Slots: {{product.availableslots}}</p>
+                            <p>Location: {{ product.Location }}</p>
+                            <p>Price: ${{ product.price }}</p>
+                            <p>Available Slots: {{ product.availableslots }}</p>
 
                             <!-- Add to Cart Button -->
                             <button v-on:click="addToCart(product)" v-if="canAddToCart(product)">Add To Cart</button>
@@ -61,7 +61,7 @@
                             <!-- Display Slot Availability -->
                             <span v-if="product.availableslots === 0">All out!</span>
                             <span v-else-if="product.availableslots < 5">
-                                Only {{product.availableslots}} left!
+                                Only {{ product.availableslots }} left!
                             </span>
                             <span v-else>Buy now!</span>
 
@@ -77,7 +77,7 @@
 
             <div v-else>
                 <h2>Checkout</h2>
-                <p>You have added {{cartItemCount}} items to cart</p>
+                <p>You have added {{ cartItemCount }} items to cart</p>
                 <p>Total Price: ${{ totalPrice }}</p>
 
                 <!-- Display each cart item with quantity controls -->
@@ -87,15 +87,15 @@
                             <img v-bind:src="item.image" alt="Product Image">
                         </div>
                         <div class="product-info">
-                            <h2>{{item.subject}}</h2>
-                            <p>Location: {{item.Location}}</p>
+                            <h2>{{ item.subject }}</h2>
+                            <p>Location: {{ item.Location }}</p>
                             <p>Price: ${{ item.price }}</p>
 
                             <!-- Quantity controls for each product -->
                             <div>
                                 <button v-on:click="updateQuantity(item, -1)"
                                     :disabled="item.quantity == 0">Remove</button>
-                                <span>Quantity: {{item.quantity}}</span>
+                                <span>Quantity: {{ item.quantity }}</span>
                                 <button v-on:click="updateQuantity(item, 1)">Add</button>
                             </div>
                         </div>
@@ -123,7 +123,7 @@
                 <select v-model="order.State">
                     <option disabled value="">State</option>
                     <option v-for="(State, key) in States" v-bind:value="State">
-                        {{key}}
+                        {{ key }}
                     </option>
                 </select>
                 <p>
@@ -146,13 +146,13 @@
                 </p>
 
                 <h2>Order Information</h2>
-                <p>First Name: {{order.firstName}}</p>
-                <p>Last Name: {{order.lastName}}</p>
-                <p>Address: {{order.Address}}</p>
-                <p>City: {{order.City}}</p>
-                <p>State: {{order.State}}</p>
-                <p>Zip: {{order.Zip}}</p>
-                <p>Gift: {{order.gift}}</p>
+                <p>First Name: {{ order.firstName }}</p>
+                <p>Last Name: {{ order.lastName }}</p>
+                <p>Address: {{ order.Address }}</p>
+                <p>City: {{ order.City }}</p>
+                <p>State: {{ order.State }}</p>
+                <p>Zip: {{ order.Zip }}</p>
+                <p>Gift: {{ order.gift }}</p>
 
                 <button v-on:click="submitForm" v-bind:disabled="!isOrderFormComplete">Place Order</button>
             </div>
@@ -216,7 +216,6 @@
                         }
                     }
                 },
-
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
@@ -226,7 +225,12 @@
                 submitForm() {
                     alert('Order submitted!');
                 },
-
+                // New method for search
+                matchesSearch(product) {
+                    const query = this.searchQuery.toLowerCase();
+                    return product.subject.toLowerCase().includes(query) ||
+                        product.Location.toLowerCase().includes(query);
+                }
             },
             computed: {
                 cartItemCount() {
@@ -236,11 +240,7 @@
                     return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
                 },
                 sortedProducts() {
-                    let products = this.products
-                        .filter(product =>
-                            product.subject.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                            product.Location.toLowerCase().includes(this.searchQuery.toLowerCase())
-                        );
+                    let products = [...this.products]; // Create a shallow copy for sorting
 
                     if (this.selectedSort === 'price') {
                         products.sort((a, b) => this.sortOrder === 'asc' ? a.price - b.price : b.price - a.price);
@@ -248,16 +248,16 @@
                         products.sort((a, b) => this.sortOrder === 'asc'
                             ? a.Location.localeCompare(b.Location)
                             : b.Location.localeCompare(a.Location));
-                    } else if (this.selectedSort == 'subject') {
-                        products.sort((a, b) => this.sortOrder == 'asc'
+                    } else if (this.selectedSort === 'subject') {
+                        products.sort((a, b) => this.sortOrder === 'asc'
                             ? a.subject.localeCompare(b.subject)
                             : b.subject.localeCompare(a.subject));
                     }
                     return products;
                 },
                 isOrderFormComplete() {
-                    return this.order.firstName && this.order.lastName && this.order.Address && this.order.City &&
-                        this.order.State && this.order.Zip;
+                    return this.order.firstName && this.order.lastName && this.order.Address &&
+                        this.order.City && this.order.State && this.order.Zip;
                 }
             }
         });
