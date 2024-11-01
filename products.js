@@ -27,11 +27,11 @@ let products =[
 },
 {
     id:1004,
-    subject:" Public Speaking Lessons",
+    subject:" Archery",
     Location: "Ottowa",
     price : 360,
     availableslots: 5 ,
-    image : "image/d.png"  ,
+    image : "image/archery.jpeg"  ,
     rating: 3
 },
 {
