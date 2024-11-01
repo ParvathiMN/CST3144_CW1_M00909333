@@ -28,14 +28,14 @@
         <!-- Sorting options with dropdowns -->
         <div>
             <label for="sort-select">Sort by:</label>
-            <select id="sort-select" v-model="selectedSort" @change="sortProducts">
+            <select id="sort-select" v-model="selectedSort">
                 <option value="price">Price</option>
                 <option value="location">Location</option>
                 <option value="subject">Subject</option>
             </select>
 
             <label for="order-select">Order:</label>
-            <select id="order-select" v-model="sortOrder" @change="sortProducts">
+            <select id="order-select" v-model="sortOrder">
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
             </select>
@@ -93,8 +93,7 @@
 
                             <!-- Quantity controls for each product -->
                             <div>
-                                <button v-on:click="updateQuantity(item, -1)"
-                                    :disabled="item.quantity == 0">Remove</button>
+                                <button v-on:click="updateQuantity(item, -1)" :disabled="item.quantity == 0">Remove</button>
                                 <span>Quantity: {{ item.quantity }}</span>
                                 <button v-on:click="updateQuantity(item, 1)">Add</button>
                             </div>
@@ -225,7 +224,7 @@
                 submitForm() {
                     alert('Order submitted!');
                 },
-                // New method for search
+                // Method for search
                 matchesSearch(product) {
                     const query = this.searchQuery.toLowerCase();
                     return product.subject.toLowerCase().includes(query) ||
@@ -240,7 +239,7 @@
                     return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
                 },
                 sortedProducts() {
-                    let products = [...this.products]; // Create a shallow copy for sorting
+                    let products = [...this.products]; 
 
                     if (this.selectedSort === 'price') {
                         products.sort((a, b) => this.sortOrder === 'asc' ? a.price - b.price : b.price - a.price);
@@ -265,3 +264,4 @@
 </body>
 
 </html>
+    
