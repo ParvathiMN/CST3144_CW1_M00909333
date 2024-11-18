@@ -1,4 +1,5 @@
 const express = require('express');
+const { result } = require('lodash');
 const MongoClient = require('mongodb').MongoClient;
 
 //const bodyParser = require('body-parser')
@@ -47,6 +48,37 @@ app.param('collectionName', (req, res, next, collectionName) => {
          }) 
         }) 
         
-app.listen(3000,()=>{
-    console.log('server.js server running at localhost:3000')
-})
+      const ObjectID = require('mongodb').ObjectID; 
+app.get('/collection/:collectionName/:id', (req, res, next) => { 
+req.collection.findOne({ _id: new ObjectID(req.params.id) }, (e, result) => { 
+if (e) return next(e) 
+res.send(result) 
+}) 
+}) 
+
+app.put('/collection/:collectionName/:id', (req, res, next) => { 
+    req.collection.update( 
+    {_id: new ObjectID(req.params.id)}, 
+    {$set: req.body}, 
+    {safe: true, multi: false},  
+    (e, result) => { 
+    if (e) return next(e) 
+    res.send((result.result.n === 1) ? {msg: 'success'} : {msg: 'error'}) 
+    }) 
+    })
+
+
+   // Delete an object
+app.delete("/collection/:collectionName/:id", (req, res, next) => {
+    req.collection.deleteOne({ _id: ObjectID(req.params.id) }, (e, result) => {
+        if (e) return next(e);
+        res.send(result.result.n === 1 ? { msg: "Success :D" } : { msg: "error" });
+    });
+});
+
+const port =process.env.PORT ||3000
+app.listen(port)
+
+// app.listen(3000,()=>{
+//     console.log('server.js server running at localhost:3000')
+// })
