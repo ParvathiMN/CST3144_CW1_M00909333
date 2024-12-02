@@ -71,6 +71,10 @@
                                 <span v-for="n in product.rating">★</span>
                                 <span v-for="n in 5 - product.rating">☆</span>
                             </div>
+                            <!-- Update Lesson Button -->
+                            <button @click="updateLesson(product.id, { subject: 'Updated Subject', price: 120 })">
+                                Update Lesson
+                            </button>
                         </div>
                     </div>
                     <br>
@@ -192,8 +196,7 @@
                 selectedSort: 'price',
                 sortOrder: 'asc',
                 searchQuery: ''
-            },
-            methods: {
+            }, methods: {
                 addToCart(product) {
                     let cartProduct = this.cart.find(item => item.id === product.id);
                     if (cartProduct) {
@@ -221,8 +224,65 @@
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
+                async updateLesson(lessonId, updatedData) {
+                    try {
+                        const response = await fetch(`http://localhost:3000/collection/Lesson/${lessonId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(updatedData),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.msg === 'success') {
+                            alert('Lesson updated successfully!');
+                            // Optionally update local data here
+                        } else {
+                            alert('Failed to update the lesson.');
+                        }
+                    } catch (error) {
+                        console.error('Update Lesson Error:', error);
+                        alert('An error occurred while updating the lesson.');
+                    }
+                },
+                async matchesSearch() {
+                    if (!this.searchQuery.trim()) {
+                        this.error = 'Please enter a search query.';
+                        this.results = [];
+                        return;
+                    }
+
+                    this.loading = true;
+                    this.error = null;
+
+                    try {
+                        const response = await fetch(
+                            `/collection/Lesson?q=${encodeURIComponent(this.searchQuery)}`
+                        );
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch data');
+                        }
+
+                        const data = await response.json();
+                        this.results = data; // Update results with fetched data
+
+                        if (this.results.length === 0) {
+                            this.error = 'No results found.';
+                        }
+                    } catch (err) {
+                        this.error = 'An error occurred while fetching data.';
+                        console.error(err);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
                 submitOrder() {
-                    // Gather the full order details
                     const orderDetails = {
                         customer: {
                             firstName: this.order.firstName,
@@ -242,7 +302,7 @@
                         totalPrice: this.totalPrice
                     };
 
-                    console.log('Order details:', orderDetails);  // Log order details
+                    console.log('Order details:', orderDetails);
 
                     fetch('http://localhost:3000/collection/orders', {
                         method: 'POST',
@@ -264,40 +324,7 @@
                             alert('Failed to place the order. Please try again.');
                             console.error('Order error:', error);
                         });
-
-                },
-                async matchesSearch() {
-      if (!this.searchQuery.trim()) {
-        this.error = 'Please enter a search query.';
-        this.results = [];
-        return;
-      }
-
-      this.loading = true;
-      this.error = null;
-
-      try {
-        const response = await fetch(
-          `/collection/Lesson?q=${encodeURIComponent(this.searchQuery)}`
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
-        const data = await response.json();
-        this.results = data; // Update results with fetched data
-
-        if (this.results.length === 0) {
-          this.error = 'No results found.';
-        }
-      } catch (err) {
-        this.error = 'An error occurred while fetching data.';
-        console.error(err);
-      } finally {
-        this.loading = false;
-      }
-    },
+                }
             },
             computed: {
                 cartItemCount() {
