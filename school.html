@@ -70,10 +70,7 @@
                                 <span v-for="n in product.rating">★</span>
                                 <span v-for="n in 5 - product.rating">☆</span>
                             </div>
-                            <!-- Update Lesson Button -->
-                            <button @click="updateLesson(product.id, { subject: 'Updated Subject', price: 120 })">
-                                Update Lesson
-                            </button>
+                            
                         </div>
                     </div>
                     <br>
@@ -194,9 +191,71 @@
                 selectedSort: 'price',
                 sortOrder: 'asc',
                 searchQuery: '',
-                Lesson:[]
-            }, 
+                products: [], // Correct initialization
+            },
             methods: {
+                async getLessons() {
+                    try {
+                        const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson');
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch lessons');
+                        }
+                        const lessons = await response.json();
+                        console.log('Lessons:', lessons);
+                        this.products = lessons; // Store lessons in products array
+                    } catch (error) {
+                        console.error('Error fetching lessons:', error);
+                    }
+                },
+                matchesSearch(product) {
+                    const query = this.searchQuery.toLowerCase();
+                    return (
+                        product.subject.toLowerCase().includes(query) ||
+                        product.Location.toLowerCase().includes(query)
+                    );
+                },
+                async submitOrder() {
+                    const orderDetails = {
+                        customer: {
+                            firstName: this.order.firstName,
+                            lastName: this.order.lastName,
+                            address: this.order.Address,
+                            city: this.order.City,
+                            state: this.order.State,
+                            zip: this.order.Zip,
+                            method: this.order.method,
+                            gift: this.order.gift
+                        },
+                        items: this.cart.map(item => ({
+                            subject: item.subject,
+                            price: item.price,
+                            quantity: item.quantity
+                        })),
+                        totalPrice: this.totalPrice
+                    };
+        
+                    console.log('Order details:', orderDetails);
+        
+                    try {
+                        const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(orderDetails)
+                        });
+        
+                        if (!response.ok) {
+                            throw new Error('Failed to place order');
+                        }
+        
+                        const data = await response.json();
+                        alert('Order placed successfully!');
+                    } catch (error) {
+                        alert('Failed to place the order. Please try again.');
+                        console.error('Order Error:', error);
+                    }
+                },
                 addToCart(product) {
                     let cartProduct = this.cart.find(item => item.id === product.id);
                     if (cartProduct) {
@@ -224,94 +283,6 @@
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
-                async getLessons() {
-        try {
-            const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson'); // Backend API endpoint
-            if (!response.ok) {
-                throw new Error('Failed to fetch lessons');
-            }
-            const lessons = await response.json();
-            console.log('Lessons:', lessons);
-            this.products = lessons; // Store lessons in your Vue data
-        } catch (error) {
-            console.error('Error fetching lessons:', error);
-        }
-    },
-
-    async matchesSearch() {
-        if (!this.searchQuery.trim()) {
-            this.error = 'Please enter a search query.';
-            this.results = [];
-            return;
-        }
-
-        this.loading = true;
-        this.error = null;
-
-        try {
-            const response = await fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(this.searchQuery)}`); // Backend search endpoint
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch data');
-            }
-
-            const data = await response.json();
-            this.results = data; // Update results with fetched data
-
-            if (this.results.length === 0) {
-                this.error = 'No results found.';
-            }
-        } catch (err) {
-            this.error = 'An error occurred while fetching data.';
-            console.error('Search Error:', err);
-        } finally {
-            this.loading = false;
-        }
-    },
-
-    async submitOrder() {
-        const orderDetails = {
-            customer: {
-                firstName: this.order.firstName,
-                lastName: this.order.lastName,
-                address: this.order.Address,
-                city: this.order.City,
-                state: this.order.State,
-                zip: this.order.Zip,
-                method: this.order.method,
-                gift: this.order.gift
-            },
-            items: this.cart.map(item => ({
-                subject: item.subject,
-                price: item.price,
-                quantity: item.quantity
-            })),
-            totalPrice: this.totalPrice
-        };
-
-        console.log('Order details:', orderDetails);
-
-        try {
-            const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderDetails)
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to place order');
-            }
-
-            const data = await response.json();
-            alert('Order placed successfully!');
-        } catch (error) {
-            alert('Failed to place the order. Please try again.');
-            console.error('Order Error:', error);
-        }
-    },
-                
             },
             computed: {
                 cartItemCount() {
@@ -334,9 +305,13 @@
                 isOrderFormComplete() {
                     return this.order.firstName && this.order.lastName && this.order.Address && this.order.City && this.order.State && this.order.Zip;
                 }
+            },
+            mounted() {
+                // Fetch lessons when the app is mounted
+                this.getLessons();
             }
         });
-    </script>
+        </script>        
 
 </body>
 
