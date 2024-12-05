@@ -1,17 +1,17 @@
-// Vue Instance
+// Additional JavaScript for the fetch API 
 const webstore = new Vue({
-    el: '#app', 
+    el: '#app',
     data: {
         sitename: 'After School Club',
         showProduct: true,
         States: {
-            AJ: 'Ajman',
-            DU: 'Dubai',
-            FU: 'Fujairah',
-            SH: 'Sharjah',
+            AJM: 'Ajman',
+            DXB: 'Dubai',
+            FUJ: 'Fujairah',
+            SHJ: 'Sharjah',
             UAQ: 'Umm Al-Quwain',
-            RA: 'Ras Al Khaimah',
-            AB: 'Abu Dhabi'
+            RAS: 'Ras Al Khaimah',
+            ABU: 'Abu Dhabi'
         },
         order: {
             firstName: '',
