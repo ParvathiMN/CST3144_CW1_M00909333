@@ -1,5 +1,5 @@
 // Additional JavaScript for the fetch API 
-    webstore = new Vue({
+const webstore = new Vue({
         el: '#app',
         data: {
             sitename: 'After School Club',
