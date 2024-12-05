@@ -2,7 +2,7 @@
     "name": "class",
     "private": true,
     "scripts": {
-        "start": "node server.js"
+        "start": "node app.js"
     },
     "dependencies": {
         "api-router": "^0.1.10",
