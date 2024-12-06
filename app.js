@@ -160,3 +160,8 @@ new Vue({
     this.getLessons(); // Fetch lessons when the Vue instance is created
   },
 });
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${8080}`);
+});
