@@ -186,7 +186,7 @@
                     dontSendGift: 'Do not send as a gift',
                     gift: false // Gift checkbox state
                 },
-
+                
                 cart: [],
                 selectedSort: 'price',
                 sortOrder: 'asc',
@@ -221,20 +221,13 @@
                 },
                 updateQuantity(item, amount) {
                     let product = this.products.find(p => p.id === item.id);
-                    if (product) {
-                        product.availableslots += amount; // Adjust the available slots when quantity changes
-                    }
-                    item.quantity += amount; // Update the quantity in the cart
-
-                    // If the quantity becomes zero, remove the item from the cart
+                    if (product) product.availableslots -= amount;
+                    item.quantity += amount;
                     if (item.quantity <= 0) {
                         const index = this.cart.findIndex(cartItem => cartItem.id === item.id);
-                        if (index !== -1) {
-                            this.cart.splice(index, 1); // Remove the item from the cart
-                        }
+                        if (index !== -1) this.cart.splice(index, 1);
                     }
                 },
-
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
@@ -252,77 +245,63 @@
                             state: this.order.State,
                             zip: this.order.Zip,
                             method: this.order.method,
-                            gift: this.order.gift
+                            gift: this.order.gift,
                         },
-                        items: this.cart.map(item => ({
-                            subject: item.subject,
-                            price: item.price,
-                            quantity: item.quantity
-                        })),
-                        totalPrice: this.totalPrice
+                        cart: this.cart,
+                        total: this.totalPrice
                     };
-
-                    console.log('Order details:', orderDetails);
-
                     try {
-                        const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders', {
+                        const response = await fetch('https://your-api-endpoint.com/submitOrder', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
+                                'Content-Type': 'application/json'
                             },
                             body: JSON.stringify(orderDetails)
                         });
-
-                        if (!response.ok) {
-                            throw new Error('Failed to place order');
+                        if (response.ok) {
+                            alert('Order successfully placed!');
+                        } else {
+                            alert('Error submitting order!');
                         }
-
-                        const data = await response.json();
-                        alert('Order placed successfully!');
                     } catch (error) {
-                        alert('Failed to place the order. Please try again.');
-                        console.error('Order Error:', error);
+                        console.error('Error submitting order:', error);
                     }
-                },
-                // New method to filter products based on search query
-                matchesSearch(product) {
-                    const query = this.searchQuery.toLowerCase();
-                    return (
-                        product.subject.toLowerCase().includes(query) ||
-                        product.Location.toLowerCase().includes(query)
-                    );
-                },
+                }
             },
             computed: {
                 cartItemCount() {
-                    return this.cart.reduce((total, product) => total + product.quantity, 0);
-                },
-                totalPrice() {
-                    return this.cart.reduce((total, product) => total + (product.price * product.quantity), 0);
+                    return this.cart.reduce((total, item) => total + item.quantity, 0);
                 },
                 sortedProducts() {
-                    let sortedArray = [...this.products];
-                    sortedArray.sort((a, b) => {
-                        if (this.sortOrder === 'asc') {
-                            return a[this.selectedSort] > b[this.selectedSort] ? 1 : -1;
-                        } else {
-                            return a[this.selectedSort] < b[this.selectedSort] ? 1 : -1;
-                        }
-                    });
-                    return sortedArray;
+                    return this.products
+                        .sort((a, b) => {
+                            let sortBy = this.selectedSort;
+                            if (this.sortOrder === 'asc') {
+                                return a[sortBy] > b[sortBy] ? 1 : -1;
+                            } else {
+                                return a[sortBy] < b[sortBy] ? 1 : -1;
+                            }
+                        });
                 },
-                // Check if the order form is complete
+                totalPrice() {
+                    return this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+                },
                 isOrderFormComplete() {
-                    return this.order.firstName && this.order.lastName && this.order.Address && this.order.City && this.order.State && this.order.Zip;
-                },
+                    return (
+                        this.order.firstName && this.order.lastName && this.order.Address && this.order.City && this.order.State && this.order.Zip
+                    );
+                }
+            },
+            watch: {
+                searchQuery() {
+                    console.log('Search query:', this.searchQuery);
+                }
             },
             created() {
-                this.getLessons(); // Fetch lessons when the Vue instance is created
-            },
+                this.getLessons(); // Fetch lessons when the app is created
+            }
         });
-
     </script>
-
 </body>
 
 </html>
