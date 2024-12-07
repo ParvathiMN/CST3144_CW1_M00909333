@@ -287,6 +287,15 @@
                         console.error('Order Error:', error);
                     }
                 },
+
+                // New method to filter products based on search query
+                matchesSearch(product) {
+                    const query = this.searchQuery.toLowerCase();
+                    return (
+                        product.subject.toLowerCase().includes(query) ||
+                        product.Location.toLowerCase().includes(query)
+                    );
+                },
             },
             computed: {
                 // Cart item count
