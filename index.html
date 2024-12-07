@@ -166,13 +166,13 @@
                 sitename: 'After School Club',
                 showProduct: true,
                 States: {
-                    AJ: 'Ajman',
-                    DU: 'Dubai',
-                    FU: 'Fujairah',
-                    SH: 'Sharjah',
+                    AJM: 'Ajman',
+                    DXB: 'Dubai',
+                    FUJ: 'Fujairah',
+                    SHJ: 'Sharjah',
                     UAQ: 'Umm Al-Quwain',
-                    RA: 'Ras Al Khaimah',
-                    AB: 'Abu Dhabi'
+                    RAS: 'Ras Al Khaimah',
+                    ABU: 'Abu Dhabi'
                 },
                 order: {
                     firstName: '',
@@ -186,11 +186,12 @@
                     dontSendGift: 'Do not send as a gift',
                     gift: false // Gift checkbox state
                 },
-                products: [],
+                
                 cart: [],
                 selectedSort: 'price',
                 sortOrder: 'asc',
-                searchQuery: ''
+                searchQuery: '',
+                products: [],
             },
             methods: {
                 async getLessons() {
@@ -303,11 +304,16 @@
                     });
                     return sortedArray;
                 },
+                // Check if the order form is complete
                 isOrderFormComplete() {
                     return this.order.firstName && this.order.lastName && this.order.Address && this.order.City && this.order.State && this.order.Zip;
-                }
-            }
+                },
+            },
+            created() {
+                this.getLessons(); // Fetch lessons when the Vue instance is created
+            },
         });
+
     </script>
 
 </body>
