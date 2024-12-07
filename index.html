@@ -70,7 +70,6 @@
                                 <span v-for="n in product.rating">★</span>
                                 <span v-for="n in 5 - product.rating">☆</span>
                             </div>
-
                         </div>
                     </div>
                     <br>
@@ -173,7 +172,7 @@
                     SH: 'Sharjah',
                     UAQ: 'Umm Al-Quwain',
                     RA: 'Ras Al Khaimah',
-                    AB: 'Abu Dhabi',
+                    AB: 'Abu Dhabi'
                 },
                 order: {
                     firstName: '',
@@ -187,14 +186,13 @@
                     dontSendGift: 'Do not send as a gift',
                     gift: false // Gift checkbox state
                 },
+                products: [],
                 cart: [],
                 selectedSort: 'price',
                 sortOrder: 'asc',
-                searchQuery: '',
-                products: [], // For storing products (lessons)
+                searchQuery: ''
             },
             methods: {
-                // Fetch products (lessons) from the backend API
                 async getLessons() {
                     try {
                         const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson');
@@ -208,8 +206,6 @@
                         console.error('Error fetching lessons:', error);
                     }
                 },
-
-                // Add a product to the cart
                 addToCart(product) {
                     let cartProduct = this.cart.find(item => item.id === product.id);
                     if (cartProduct) {
@@ -222,8 +218,6 @@
                         product.availableslots--;
                     }
                 },
-
-                // Update the quantity of a product in the cart
                 updateQuantity(item, amount) {
                     let product = this.products.find(p => p.id === item.id);
                     if (product) product.availableslots -= amount;
@@ -233,17 +227,12 @@
                         if (index !== -1) this.cart.splice(index, 1);
                     }
                 },
-
-                // Check if the product can be added to the cart
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
-
-                // Toggle between product list and checkout page
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
-
                 // Submit the order to the backend
                 async submitOrder() {
                     const orderDetails = {
@@ -287,7 +276,6 @@
                         console.error('Order Error:', error);
                     }
                 },
-
                 // New method to filter products based on search query
                 matchesSearch(product) {
                     const query = this.searchQuery.toLowerCase();
@@ -298,17 +286,12 @@
                 },
             },
             computed: {
-                // Cart item count
                 cartItemCount() {
                     return this.cart.reduce((total, product) => total + product.quantity, 0);
                 },
-
-                // Total price of items in the cart
                 totalPrice() {
                     return this.cart.reduce((total, product) => total + (product.price * product.quantity), 0);
                 },
-
-                // Sorted products based on selected sort criteria
                 sortedProducts() {
                     let sortedArray = [...this.products];
                     sortedArray.sort((a, b) => {
@@ -320,17 +303,11 @@
                     });
                     return sortedArray;
                 },
-
-                // Check if the order form is complete
                 isOrderFormComplete() {
                     return this.order.firstName && this.order.lastName && this.order.Address && this.order.City && this.order.State && this.order.Zip;
-                },
-            },
-            created() {
-                this.getLessons(); // Fetch lessons when the Vue instance is created
-            },
+                }
+            }
         });
-
     </script>
 
 </body>
