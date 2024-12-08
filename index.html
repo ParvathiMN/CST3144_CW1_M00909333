@@ -186,7 +186,7 @@
                     dontSendGift: 'Do not send as a gift',
                     gift: false // Gift checkbox state
                 },
-                
+
                 cart: [],
                 selectedSort: 'price',
                 sortOrder: 'asc',
@@ -273,13 +273,35 @@
                         console.error('Error submitting order:', error);
                     }
                 },
-                matchesSearch(product) {
-                    const query = this.searchQuery.toLowerCase();
-                    return (
-                        product.subject.toLowerCase().includes(query) ||
-                        product.Location.toLowerCase().includes(query)
-                    );
-                },
+                matchesSearch() {
+                    const query = this.searchQuery.trim(); // Trim any leading/trailing whitespace
+
+                    if (!query) {
+                        console.error("Search query is empty");
+                        return;
+                    }
+
+                    fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`Error: ${response.statusText}`);
+                            }
+                            return response.json();
+                        })
+                        .then((results) => {
+                            if (Array.isArray(results) && results.length > 0) {
+                                console.log("Search Results:", results);
+                                this.filteredProducts = results; // Update the UI with results
+                            } else {
+                                console.log("No lessons found matching the search criteria.");
+                                this.filteredProducts = []; // Clear the UI if no results
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error during fetch:", error.message);
+                        });
+                }
+
             },
             computed: {
                 cartItemCount() {
