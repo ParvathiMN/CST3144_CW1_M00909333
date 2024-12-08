@@ -275,12 +275,6 @@
                 },
                 matchesSearch() {
                     const query = this.searchQuery.trim(); // Trim any leading/trailing whitespace
-
-                    // if (!query) {
-                    //     console.error("Search query is empty");
-                    //     return;
-                    // }
-
                     fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`)
                         .then((response) => {
                             if (!response.ok) {
