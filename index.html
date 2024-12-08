@@ -221,11 +221,17 @@
                 },
                 updateQuantity(item, amount) {
                     let product = this.products.find(p => p.id === item.id);
-                    if (product) product.availableslots -= amount;
+
+                    // Update quantity and availability
                     item.quantity += amount;
+                    product.availableslots -= amount;
+
+                    // Remove item if quantity reaches zero
                     if (item.quantity <= 0) {
                         const index = this.cart.findIndex(cartItem => cartItem.id === item.id);
-                        if (index !== -1) this.cart.splice(index, 1);
+                        if (index !== -1) {
+                            this.cart.splice(index, 1); // Remove item from cart
+                        }
                     }
                 },
                 canAddToCart(product) {
