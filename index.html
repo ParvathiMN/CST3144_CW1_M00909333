@@ -272,7 +272,14 @@
                     } catch (error) {
                         console.error('Error submitting order:', error);
                     }
-                }
+                },
+                matchesSearch(product) {
+                    const query = this.searchQuery.toLowerCase();
+                    return (
+                        product.subject.toLowerCase().includes(query) ||
+                        product.Location.toLowerCase().includes(query)
+                    );
+                },
             },
             computed: {
                 cartItemCount() {
