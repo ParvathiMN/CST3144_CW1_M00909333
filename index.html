@@ -208,7 +208,7 @@
                     }
                 },
                 addToCart(product) {
-                    let cartProduct = this.cart.find(item => item.id === product.id);
+                    let cartProduct = this.cart.find(item => item.id === product._id);
                     if (cartProduct) {
                         if (this.canAddToCart(product)) {
                             cartProduct.quantity++;
@@ -220,7 +220,7 @@
                     }
                 },
                 updateQuantity(item, amount) {
-                    let product = this.products.find(p => p.id === item.id);
+                    let product = this.products.find(p => p._id === item.id);
 
                     // Update quantity and availability
                     item.quantity += amount;
