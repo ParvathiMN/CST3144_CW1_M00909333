@@ -15,7 +15,12 @@
         <header>
             <h1>{{ sitename }}</h1>
             <!-- Search Bar -->
-            <input v-model="searchQuery" placeholder="Search for Lessons.." />
+            <div class="search-bar">
+                <input v-model="searchQuery" placeholder="Search for Lessons..."  @input="matchesSearch" class="search-input"/>
+                <button v-on:click="matchesSearch" class="search-button">
+                    <span class="fas fa-search"> Search</span>
+                </button>
+            </div>
 
             <!-- Disable checkout button when cart is empty -->
             <button v-on:click="showCheckout" v-bind:disabled="cartItemCount === 0">
@@ -274,27 +279,36 @@
                     }
                 },
                 matchesSearch() {
-                    const query = this.searchQuery.trim(); // Trim any leading/trailing whitespace
-                    fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`)
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw new Error(`Error: ${response.statusText}`);
-                            }
-                            return response.json();
-                        })
-                        .then((results) => {
-                            if (Array.isArray(results) && results.length > 0) {
-                                console.log("Search Results:", results);
-                                this.filteredProducts = results; // Update the UI with results
-                            } else {
-                                console.log("No lessons found.");
-                                this.filteredProducts = []; // Clear the UI if no results
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Error during fetch:", error.message);
-                        });
-                }
+    const query = this.searchQuery.trim(); // Remove extra spaces
+
+    // Ensure query is not empty
+    if (!query) {
+        console.error("Search query is empty");
+        this.filteredProducts = []; // Clear results if query is empty
+        return;
+    }
+
+    // Perform the fetch request
+    fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`); // Handle non-200 responses
+            }
+            return response.json();
+        })
+        .then((results) => {
+            if (Array.isArray(results) && results.length > 0) {
+                console.log("Search Results:", results);
+                this.filteredProducts = results; // Update UI
+            } else {
+                console.log("No lessons found.");
+                this.filteredProducts = []; // Clear results if no matches
+            }
+        })
+        .catch((error) => {
+            console.error("Error during fetch:", error.message);
+        });
+}
 
             },
             computed: {
