@@ -16,7 +16,8 @@
             <h1>{{ sitename }}</h1>
             <!-- Search Bar -->
             <div class="search-bar">
-                <input v-model="searchQuery" placeholder="Search for Lessons..."  @input="matchesSearch" class="search-input"/>
+                <input v-model="searchQuery" placeholder="Search for Lessons..." @input="matchesSearch"
+                    class="search-input" />
                 <button v-on:click="matchesSearch" class="search-button">
                     <span class="fas fa-search"> Search</span>
                 </button>
@@ -262,7 +263,7 @@
                         total: this.totalPrice
                     };
                     try {
-                        const response = await fetch('https://your-api-endpoint.com/submitOrder', {
+                        const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -278,38 +279,32 @@
                         console.error('Error submitting order:', error);
                     }
                 },
-                matchesSearch() {
-    const query = this.searchQuery.trim(); // Remove extra spaces
-
-    // Ensure query is not empty
-    if (!query) {
-        console.error("Search query is empty");
-        this.filteredProducts = []; // Clear results if query is empty
-        return;
-    }
-
-    // Perform the fetch request
-    fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`); // Handle non-200 responses
-            }
-            return response.json();
-        })
-        .then((results) => {
-            if (Array.isArray(results) && results.length > 0) {
-                console.log("Search Results:", results);
-                this.filteredProducts = results; // Update UI
-            } else {
-                console.log("No lessons found.");
-                this.filteredProducts = []; // Clear results if no matches
-            }
-        })
-        .catch((error) => {
-            console.error("Error during fetch:", error.message);
-        });
-}
-
+                matchesSearch(product) {
+                    const query = this.searchQuery.trim().toLowerCase();
+                    if (!query) {
+                        return true; // Show all products if search query is empty
+                    }
+                    return (
+                        product.subject.toLowerCase().includes(query) ||
+                        product.Location.toLowerCase().includes(query)
+                    );
+                },
+                // Function to fetch products from the API
+                fetchProducts() {
+                    fetch("https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`") // Replace with the correct render link
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Network response was not ok");
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            this.products = data; // Assign fetched data to products array
+                        })
+                        .catch((error) => {
+                            console.error("There was a problem with the fetch operation:", error);
+                        });
+                },
             },
             computed: {
                 cartItemCount() {
@@ -342,7 +337,11 @@
             },
             created() {
                 this.getLessons(); // Fetch lessons when the app is created
-            }
+            },
+            mounted() {
+                // Fetch products when the component is mounted
+                this.fetchProducts();
+            },
         });
     </script>
 </body>
