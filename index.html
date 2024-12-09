@@ -45,6 +45,7 @@
                 <option value="desc">Descending</option>
             </select>
         </div>
+        <br>
 
         <main>
             <div v-if="showProduct">
@@ -226,7 +227,7 @@
                     }
                 },
                 updateQuantity(item, amount) {
-                    let product = this.products.find(p => p._id === item.id);
+                    let product = this.products.find(p => p.id === item.id);
 
                     // Update quantity and availability
                     item.quantity += amount;
@@ -311,15 +312,25 @@
                     return this.cart.reduce((total, item) => total + item.quantity, 0);
                 },
                 sortedProducts() {
-                    return this.products
-                        .sort((a, b) => {
-                            let sortBy = this.selectedSort;
-                            if (this.sortOrder === 'asc') {
-                                return a[sortBy] > b[sortBy] ? 1 : -1;
-                            } else {
-                                return a[sortBy] < b[sortBy] ? 1 : -1;
-                            }
-                        });
+                    let products = this.products
+                        .filter(product =>
+                            product.subject.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                            product.Location.toLowerCase().includes(this.searchQuery.toLowerCase())
+                        );
+
+                    if (this.selectedSort === 'price') {
+                        products.sort((a, b) => this.sortOrder === 'asc' ? a.price - b.price : b.price - a.price);
+                    } else if (this.selectedSort === 'location') {
+                        products.sort((a, b) => this.sortOrder === 'asc'
+                            ? a.Location.localeCompare(b.Location)
+                            : b.Location.localeCompare(a.Location));
+                    } else if (this.selectedSort === 'subject') {
+                        products.sort((a, b) => this.sortOrder === 'asc'
+                            ? a.subject.localeCompare(b.subject)
+                            : b.subject.localeCompare(a.subject));
+                    }
+
+                    return products;
                 },
                 totalPrice() {
                     return this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
