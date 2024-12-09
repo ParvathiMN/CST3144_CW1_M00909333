@@ -215,7 +215,7 @@
                     }
                 },
                 addToCart(product) {
-                    let cartProduct = this.cart.find(item => item.id === product._id);
+                    let cartProduct = this.cart.find(item => item.id === product.id);
                     if (cartProduct) {
                         if (this.canAddToCart(product)) {
                             cartProduct.quantity++;
@@ -241,6 +241,7 @@
                         }
                     }
                 },
+
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
