@@ -31,7 +31,7 @@
         </header>
 
         <!-- Sorting Options -->
-        <div>
+         <div class="sort-order-container">
             <label for="sort-select">Sort by:</label>
             <select id="sort-select" v-model="selectedSort">
                 <option value="price">Price</option>
@@ -47,7 +47,7 @@
             </select>
         </div>
         <br>
-
+        <br>
         <main>
             <div v-if="showProduct">
                 <!-- Product List -->
@@ -91,8 +91,6 @@
                 <p>Total Price: ${{ totalPrice }}</p>
 
                 <!-- Cart Items -->
-
-
                 <div v-for="item in cart" :key="item._id">
                     <div class="product-card">
                         <div class="image-container">
@@ -115,7 +113,7 @@
 
 
                 <!-- Order Form -->
-                <div>
+               <div class="order-form-container">
                     <p>
                         <strong>First Name:</strong>
                         <input v-model.trim="order.firstName" />
@@ -154,7 +152,9 @@
                         <input type="radio" id="business" value="Business" v-model="order.method">
                         <label for="business">Business</label>
                     </p>
+               </div>
 
+                <div class="order-info-container">
                     <h2>Order Information</h2>
                     <p>First Name: {{ order.firstName }}</p>
                     <p>Last Name: {{ order.lastName }}</p>
@@ -164,6 +164,7 @@
                     <p>Zip: {{ order.Zip }}</p>
                     <p>Gift: {{ order.gift }}</p>
                     <p><strong>Order Method:</strong> {{ order.method }}</p>
+                </div>
 
                     <button v-on:click="submitOrder" v-bind:disabled="!isOrderFormComplete">Place Order</button>
                 </div>
