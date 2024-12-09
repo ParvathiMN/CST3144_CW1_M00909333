@@ -37,38 +37,41 @@ button:hover {
     background-color: #ff4500;
 }
 
-/* Individual Product Card */
+/* Product card container */
 .product-card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 10px;
     padding: 15px;
-    width: 220px; /* Adjust the width as needed */
+    width: 100%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    transition: transform 0.3s ease;
 }
 
-/* Image Container */
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+/* Image container */
 .image-container {
-    flex: none;
-    max-width: 100%;
-    margin-bottom: 15px;
+    flex: 1;
+    max-width: 150px;
+    margin-right: 20px;
 }
 
 .image-container img {
-    width: 100%;
-    max-width: 150px;
+    width: 150px;
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
 }
 
-/* Product Information */
+/* Product info */
 .product-info {
-    text-align: center;
+    flex: 2;
 }
 
 .product-info h2 {
@@ -88,7 +91,7 @@ button:hover {
     font-weight: bold;
 }
 
-/* Add to Cart Button */
+/* Add to cart button */
 .product-info button {
     background-color: #f19c0a;
     color: white;
@@ -209,4 +212,36 @@ input[type="text"] {
     border: 1px solid #ccc;
     outline: none;
     transition: border 0.3s;
+}
+
+
+/* Styling for sorting dropdowns (Sort By and Order) */
+#sort-select,
+#order-select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    outline: none;
+    background: #f8612a;
+    color: #eee;
+    font-size: 16px;
+    width: 200px;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+/* Hover and focus effects for dropdowns */
+#sort-select:hover,
+#sort-select:focus,
+#order-select:hover,
+#order-select:focus {
+    box-shadow: 0 0 10px #f8612a;
+    transform: scale(1.05);
+}
+
+/* Additional styling for consistency */
+#sort-select option,
+#order-select option {
+    background: #f8612a;
+    color: #eee;
+    padding: 10px;
 }

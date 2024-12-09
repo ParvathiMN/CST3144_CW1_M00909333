@@ -37,6 +37,7 @@
                 <option value="price">Price</option>
                 <option value="location">Location</option>
                 <option value="subject">Subject</option>
+                <option value="availability">Availability</option>
             </select>
 
             <label for="order-select">Order:</label>
@@ -90,25 +91,7 @@
                 <p>Total Price: ${{ totalPrice }}</p>
 
                 <!-- Cart Items -->
-                <!-- <div v-for="(item, index) in cart" :key="index">
-                    <div class="product-card">
-                        <div class="image-container">
-                            <img v-bind:src="item.image" alt="Product Image">
-                        </div>
-                        <div class="product-info">
-                            <h2>{{ item.subject }}</h2>
-                            <p>Location: {{ item.Location }}</p>
-                            <p>Price: ${{ item.price }}</p>
-                            
-                             // Quantity controls for each product 
-                             <div>
-                                <button v-on:click="updateQuantity(item, -1)" :disabled="item.quantity == 0">Remove</button>
-                                <span>Quantity: {{item.quantity}}</span>
-                                <button v-on:click="updateQuantity(item, 1)">Add</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
+
 
                 <div v-for="item in cart" :key="item._id">
                     <div class="product-card">
@@ -125,7 +108,6 @@
                                 <button @click="updateQuantity(item, -1)"
                                     :disabled="item.quantity === 0">Remove</button>
                                 <span>Quantity: {{ item.quantity }}</span>
-                                <button @click="updateQuantity(item, 1)">Add</button>
                             </div>
                         </div>
                     </div>
@@ -358,7 +340,11 @@
                             ? a.subject.localeCompare(b.subject)
                             : b.subject.localeCompare(a.subject));
                     }
-
+                    else if (this.selectedSort === 'availability') {
+                        products.sort((a, b) => this.sortOrder === 'asc'
+                            ? a.availableslots - b.availableslots
+                            : b.availableslots - a.availableslots);
+                    }
                     return products;
                 },
                 totalPrice() {
