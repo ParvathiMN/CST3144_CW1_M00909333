@@ -90,7 +90,7 @@
                 <p>Total Price: ${{ totalPrice }}</p>
 
                 <!-- Cart Items -->
-                <div v-for="(item, index) in cart" :key="index">
+                <!-- <div v-for="(item, index) in cart" :key="index">
                     <div class="product-card">
                         <div class="image-container">
                             <img v-bind:src="item.image" alt="Product Image">
@@ -100,7 +100,7 @@
                             <p>Location: {{ item.Location }}</p>
                             <p>Price: ${{ item.price }}</p>
                             
-                             <!-- Quantity controls for each product -->
+                             // Quantity controls for each product 
                              <div>
                                 <button v-on:click="updateQuantity(item, -1)" :disabled="item.quantity == 0">Remove</button>
                                 <span>Quantity: {{item.quantity}}</span>
@@ -108,7 +108,29 @@
                             </div>
                         </div>
                     </div>
+                </div> -->
+
+                <div v-for="item in cart" :key="item._id">
+                    <div class="product-card">
+                        <div class="image-container">
+                            <img :src="item.image" alt="Product Image">
+                        </div>
+                        <div class="product-info">
+                            <h2>{{ item.subject }}</h2>
+                            <p>Location: {{ item.Location }}</p>
+                            <p>Price: ${{ item.price }}</p>
+
+                            <!-- Quantity controls for each product -->
+                            <div>
+                                <button @click="updateQuantity(item, -1)"
+                                    :disabled="item.quantity === 0">Remove</button>
+                                <span>Quantity: {{ item.quantity }}</span>
+                                <button @click="updateQuantity(item, 1)">Add</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
 
                 <!-- Order Form -->
                 <div>
@@ -217,7 +239,7 @@
                     }
                 },
                 addToCart(product) {
-                    let cartProduct = this.cart.find(item => item.id === product.id);
+                    let cartProduct = this.cart.find(item => item._id === product._id); // Use `_id` for comparison
                     if (cartProduct) {
                         if (this.canAddToCart(product)) {
                             cartProduct.quantity++;
@@ -228,21 +250,25 @@
                         product.availableslots--;
                     }
                 },
+
                 updateQuantity(item, amount) {
-                    let product = this.products.find(p => p.id === item.id);
+                    let product = this.products.find(p => p._id === item._id); // Use `_id` for matching
 
-                    // Update quantity and availability
-                    item.quantity += amount;
-                    product.availableslots -= amount;
+                    if (product) {
+                        // Update quantity and availability
+                        item.quantity += amount;
+                        product.availableslots -= amount;
 
-                    // Remove item if quantity reaches zero
-                    if (item.quantity <= 0) {
-                        const index = this.cart.findIndex(cartItem => cartItem.id === item.id);
-                        if (index !== -1) {
-                            this.cart.splice(index, 1); // Remove item from cart
+                        // Remove item if quantity reaches zero
+                        if (item.quantity <= 0) {
+                            const index = this.cart.findIndex(cartItem => cartItem._id === item._id);
+                            if (index !== -1) {
+                                this.cart.splice(index, 1); // Remove item from cart
+                            }
                         }
                     }
                 },
+
 
                 canAddToCart(product) {
                     return product.availableslots > 0;
