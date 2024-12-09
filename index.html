@@ -272,20 +272,23 @@
                             gift: this.order.gift,
                         },
                         cart: this.cart,
-                        total: this.totalPrice
+                        total: this.totalPrice,
                     };
+
                     try {
                         const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify(orderDetails)
+                            body: JSON.stringify(orderDetails),
                         });
-                        if (response.ok) {
-                            alert('Order successfully placed!');
 
-                            // Clear cart and reset order form
+                        if (response.ok) {
+                            const data = await response.json();
+                            alert(data.message);
+
+                            // Clear cart and reset order
                             this.cart = [];
                             this.order = {
                                 firstName: '',
@@ -297,17 +300,21 @@
                                 method: 'Home',
                                 sendGift: 'Send as a gift',
                                 dontSendGift: 'Do not send as a gift',
-                                gift: false
+                                gift: false,
                             };
 
-                            // Refresh products list
+                            // Fetch updated lessons
                             await this.getLessons();
-                            this.showProduct = true; // Switch back to the products page
+
+                            // Reset view to product page
+                            this.showProduct = true;
                         } else {
-                            alert('Error submitting order!');
+                            const errorData = await response.json();
+                            alert('Error: ' + errorData.message);
                         }
                     } catch (error) {
                         console.error('Error submitting order:', error);
+                        alert('An error occurred while placing the order.');
                     }
                 },
                 matchesSearch(product) {
