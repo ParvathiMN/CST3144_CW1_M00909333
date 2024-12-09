@@ -99,10 +99,12 @@
                             <h2>{{ item.subject }}</h2>
                             <p>Location: {{ item.Location }}</p>
                             <p>Price: ${{ item.price }}</p>
-                            <div>
-                                <!-- Quantity Controls -->
-                                <button v-on:click="updateQuantity(item, -1)">Remove</button>
-                                <span>Quantity: {{ item.quantity }}</span>
+                            
+                             <!-- Quantity controls for each product -->
+                             <div>
+                                <button v-on:click="updateQuantity(item, -1)" :disabled="item.quantity == 0">Remove</button>
+                                <span>Quantity: {{item.quantity}}</span>
+                                <button v-on:click="updateQuantity(item, 1)">Add</button>
                             </div>
                         </div>
                     </div>
