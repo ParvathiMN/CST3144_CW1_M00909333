@@ -31,7 +31,7 @@
         </header>
 
         <!-- Sorting Options -->
-         <div class="sort-order-container">
+        <div class="sort-order-container">
             <label for="sort-select">Sort by:</label>
             <select id="sort-select" v-model="selectedSort">
                 <option value="price">Price</option>
@@ -113,7 +113,7 @@
 
 
                 <!-- Order Form -->
-               <div class="order-form-container">
+                <div class="order-form-container">
                     <p>
                         <strong>First Name:</strong>
                         <input v-model.trim="order.firstName" />
@@ -152,7 +152,7 @@
                         <input type="radio" id="business" value="Business" v-model="order.method">
                         <label for="business">Business</label>
                     </p>
-               </div>
+                </div>
 
                 <div class="order-info-container">
                     <h2>Order Information</h2>
@@ -166,10 +166,10 @@
                     <p><strong>Order Method:</strong> {{ order.method }}</p>
                 </div>
 
-                    <button v-on:click="submitOrder" v-bind:disabled="!isOrderFormComplete">Place Order</button>
-                </div>
+                <button v-on:click="submitOrder" v-bind:disabled="!isOrderFormComplete">Place Order</button>
             </div>
-        </main>
+    </div>
+    </main>
     </div>
 
     <!-- Additional JavaScript for the fetch API -->
@@ -259,7 +259,6 @@
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
-                // Submit the order to the backend
                 async submitOrder() {
                     const orderDetails = {
                         customer: {
@@ -285,6 +284,25 @@
                         });
                         if (response.ok) {
                             alert('Order successfully placed!');
+
+                            // Clear cart and reset order form
+                            this.cart = [];
+                            this.order = {
+                                firstName: '',
+                                lastName: '',
+                                Address: '',
+                                City: '',
+                                State: '',
+                                Zip: '',
+                                method: 'Home',
+                                sendGift: 'Send as a gift',
+                                dontSendGift: 'Do not send as a gift',
+                                gift: false
+                            };
+
+                            // Refresh products list
+                            await this.getLessons();
+                            this.showProduct = true; // Switch back to the products page
                         } else {
                             alert('Error submitting order!');
                         }
