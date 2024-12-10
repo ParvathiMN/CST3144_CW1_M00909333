@@ -54,7 +54,7 @@
                 <div v-for="product in sortedProducts" :key="product.id" v-if="matchesSearch(product)">
                     <div class="product-card">
                         <div class="image-container">
-                            <img v-bind:src="product.image" alt="Product Image">
+                            <img v-bind:src="imageLink(product.image)" alt="Product Image">
                         </div>
                         <div class="product-info">
                             <h2 v-text="product.subject"></h2>
@@ -208,31 +208,6 @@
                 products: [],
             },
             methods: {
-                async matchesSearch() {
-                    const query = this.searchQuery.trim().toLowerCase();
-
-                    // if (!query) {
-                    //     // If the search query is empty, call getLessons
-                    //     await this.getLessons();
-                    //     return;
-                    // }
-
-                    try {
-                        const response = await fetch(
-                            `https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`
-                        );
-
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch search results');
-                        }
-
-                        const searchResults = await response.json();
-                        console.log('Search Results:', searchResults);
-                        this.products = searchResults; // Update products with search results
-                    } catch (error) {
-                        console.error('Error fetching search results:', error);
-                    }
-                },
                 async getLessons() {
                     try {
                         const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson');
@@ -246,7 +221,6 @@
                         console.error('Error fetching lessons:', error);
                     }
                 },
-
                 addToCart(product) {
                     let cartProduct = this.cart.find(item => item._id === product._id); // Use `_id` for comparison
                     if (cartProduct) {
@@ -277,23 +251,29 @@
                         }
                     }
                 },
+
+
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
-                async submitOrder(event) {
-                    event?.preventDefault();
-
-                    // Trim all fields to avoid issues with whitespace
-                    if (!this.order.firstName.trim() || !this.order.lastName.trim() ||
-                        !this.order.Address.trim() || !this.order.City.trim() ||
-                        !this.order.State.trim() || !this.order.Zip.trim()) {
-                        alert("Please fill in all the details.");
+                async submitOrder() {
+                    // Check for missing fields in the order form
+                    if (
+                        !this.order.firstName ||
+                        !this.order.lastName ||
+                        !this.order.Address ||
+                        !this.order.City ||
+                        !this.order.State ||
+                        !this.order.Zip
+                    ) {
+                        alert("Please fill in all the required fields before submitting your order.");
                         return;
                     }
 
+                    // Prepare order details
                     const orderDetails = {
                         customer: {
                             firstName: this.order.firstName,
@@ -310,43 +290,129 @@
                     };
 
                     try {
-                        const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(orderDetails),
-                        });
+                        // Submit order to the backend
+                        const response = await fetch(
+                            "https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(orderDetails),
+                            }
+                        );
 
                         if (response.ok) {
                             const data = await response.json();
-                            alert(data.message);
-                            // Reset logic
+                            alert("Order placed successfully: " + data.message);
+
+                            // Update available slots after order is placed
+                            for (const product of this.cart) {
+                                const updatedSlots = product.availableslots - product.quantity;
+                                if (updatedSlots >= 0) {
+                                    await fetch(
+                                        `https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson`,
+                                        {
+                                            method: "PUT",
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                            },
+                                            body: JSON.stringify({ availableslots: updatedSlots }),
+                                        }
+                                    );
+                                }
+                            }
+
+                            // Clear cart and reset order
                             this.cart = [];
                             this.order = {
-                                firstName: '',
-                                lastName: '',
-                                Address: '',
-                                City: '',
-                                State: '',
-                                Zip: '',
-                                method: 'Home',
-                                sendGift: 'Send as a gift',
-                                dontSendGift: 'Do not send as a gift',
+                                firstName: "",
+                                lastName: "",
+                                Address: "",
+                                City: "",
+                                State: "",
+                                Zip: "",
+                                method: "Home",
                                 gift: false,
                             };
+
+                            // Fetch updated lessons or products
                             await this.getLessons();
-                            this.showProduct = true;
                         } else {
                             const errorData = await response.json();
-                            alert('Error: ' + errorData.message);
+                            alert("Error placing order: " + errorData.message);
                         }
                     } catch (error) {
-                        console.error('Error submitting order:', error);
-                        alert('An error occurred while placing the order.');
+                        console.error("Error submitting order:", error);
+                        alert("An error occurred while placing the order.");
+                    }
+                },
+                // Function to match search query
+                matchesSearch(product) {
+                    const query = this.searchQuery.trim();
+
+                    // If the query is empty, return true (show all products)
+                    if (!query) {
+                        return true;
+                    }
+
+                    // Perform the search on the product fields (subject or location)
+                    if (product.subject && product.subject.includes(query)) {
+                        return true;
+                    }
+                    if (product.Location && product.Location.includes(query)) {
+                        return true;
+                    }
+
+                    return false; // If no match, return false
+                },
+
+                // Function to fetch products based on search query
+                fetchProducts() {
+                    const query = this.searchQuery.trim();
+
+                    if (query) {
+                        // Construct the API endpoint with the query parameter
+                        const url = `https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`;
+
+                        fetch(url)
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error("Network response was not ok");
+                                }
+                                return response.json();
+                            })
+                            .then((data) => {
+                                this.products = data; // Assign fetched data to products array
+                            })
+                            .catch((error) => {
+                                console.error("Error fetching products:", error);
+                            });
+                    } else {
+                        // If search query is empty, fetch all products or reset
+                        this.fetchAllProducts();
                     }
                 },
 
+                // method to fetch all products when query is empty
+                fetchAllProducts() {
+                    fetch("https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson")
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Network response was not ok");
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            this.products = data; // Assign all products to the array
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching all products:", error);
+                        });
+                },
+                imageLink(image) {
+                    return 'https://m00909333-cst3144-backend-577777.onrender.com/$(image)';
+                }
 
             },
             computed: {
@@ -393,11 +459,11 @@
                 }
             },
             created() {
-              //  this.getLessons(); // Fetch lessons when the app is created
+                this.fetchProducts(); // Fetch lessons when the app is created
             },
             mounted() {
-                // Fetch lessons when the component is mounted
-                  this.getLessons();
+                // Fetch products when the component is mounted
+                this.getLessons();
             },
         });
     </script>
