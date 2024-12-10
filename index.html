@@ -251,8 +251,6 @@
                         }
                     }
                 },
-
-
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
@@ -326,32 +324,31 @@
                     }
                 },
 
-                matchesSearch(product) {
+                matchesSearch() {
                     const query = this.searchQuery.trim().toLowerCase();
+
+                    // Return all products if search query is empty
                     if (!query) {
-                        return true; // Show all products if search query is empty
+                        this.fetchProducts(); // Fetch all products
+                        return;
                     }
-                    return (
-                        product.subject.toLowerCase().includes(query) ||
-                        product.Location.toLowerCase().includes(query)
-                    );
-                },
-                // Function to fetch products from the API
-                fetchProducts() {
-                    fetch("https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`") // Replace with the correct render link
+
+                    // Make an API call to search for products
+                    fetch(`https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`)
                         .then((response) => {
                             if (!response.ok) {
-                                throw new Error("Network response was not ok");
+                                throw new Error('Network response was not ok');
                             }
                             return response.json();
                         })
                         .then((data) => {
-                            this.products = data; // Assign fetched data to products array
+                            this.products = data; // Update the products array with the fetched data
                         })
                         .catch((error) => {
-                            console.error("There was a problem with the fetch operation:", error);
+                            console.error('There was a problem with the fetch operation:', error);
                         });
                 },
+
             },
             computed: {
                 cartItemCount() {
