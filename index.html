@@ -23,7 +23,7 @@
             </div>
 
             <!-- Disable checkout button when cart is empty -->
-            <button v-on:click="showCheckout" v-bind:disabled="cartItemCount === 0 && showProduct" :class="{disabled= cartItemCount === 0 && showProduct}">
+            <button v-on:click="showCheckout" v-bind:disabled="cartItemCount === 0 && showProduct" :class="{disabled: cartItemCount === 0 && showProduct}">
                 {{ cartItemCount }}
                 <span class="fas fa-cart-plus"> Checkout</span>
             </button>
