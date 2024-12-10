@@ -211,11 +211,11 @@
                 async matchesSearch() {
                     const query = this.searchQuery.trim().toLowerCase();
 
-                    if (!query) {
-                        // If the search query is empty, call getLessons
-                        await this.getLessons();
-                        return;
-                    }
+                    // if (!query) {
+                    //     // If the search query is empty, call getLessons
+                    //     await this.getLessons();
+                    //     return;
+                    // }
 
                     try {
                         const response = await fetch(
