@@ -210,7 +210,7 @@
             methods: {
                 async getLessons() {
                     try {
-                        const response = await fetch('https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson');
+                        const response = await fetch('https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson');
                         if (!response.ok) {
                             throw new Error('Failed to fetch lessons');
                         }
@@ -292,7 +292,7 @@
                     try {
                         // Submit order to the backend
                         const response = await fetch(
-                            "https://m00909333-cst3144-backend-577777.onrender.com/collection/Orders",
+                            "https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Orders",
                             {
                                 method: "POST",
                                 headers: {
@@ -311,7 +311,7 @@
                                 const updatedSlots = product.availableslots - product.quantity;
                                 if (updatedSlots >= 0) {
                                     await fetch(
-                                        `https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson`,
+                                        `https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson`,
                                         {
                                             method: "PUT",
                                             headers: {
@@ -373,7 +373,7 @@
 
                     if (query) {
                         // Construct the API endpoint with the query parameter
-                        const url = `https://m00909333-cst3144-backend-577777.onrender.com/search?q=${encodeURIComponent(query)}`;
+                        const url = `https://m00909333-cst3144-backend-577777-bphr.onrender.com/search?q=${encodeURIComponent(query)}`;
 
                         fetch(url)
                             .then((response) => {
@@ -396,7 +396,7 @@
 
                 // method to fetch all products when query is empty
                 fetchAllProducts() {
-                    fetch("https://m00909333-cst3144-backend-577777.onrender.com/collection/Lesson")
+                    fetch("https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson")
                         .then((response) => {
                             if (!response.ok) {
                                 throw new Error("Network response was not ok");
@@ -411,7 +411,7 @@
                         });
                 },
                 imageLink(image) {
-                    return 'https://m00909333-cst3144-backend-577777.onrender.com/$(image)';
+                    return 'https://m00909333-cst3144-backend-577777-bphr.onrender.com/$(image)';
                 }
 
             },
