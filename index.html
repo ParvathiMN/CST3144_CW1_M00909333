@@ -94,7 +94,7 @@
                 <div v-for="item in cart" :key="item._id">
                     <div class="product-card">
                         <div class="image-container">
-                            <img :src="imageLink(product.image)" alt="Product Image">
+                            <img :src="imageLink(item.image)" alt="Product Image">
                         </div>
                         <div class="product-info">
                             <h2>{{ item.subject }}</h2>
