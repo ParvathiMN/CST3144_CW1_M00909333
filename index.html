@@ -259,94 +259,98 @@
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
+                // Fetch for adding orders to backend 
                 async submitOrder() {
-                    // Check for missing fields in the order form
-                    if (
-                        !this.order.firstName ||
-                        !this.order.lastName ||
-                        !this.order.Address ||
-                        !this.order.City ||
-                        !this.order.State ||
-                        !this.order.Zip
-                    ) {
-                        alert("Please fill in all the required fields before submitting your order.");
-                        return;
-                    }
+    // Check for missing fields in the order form
+    if (
+        !this.order.firstName ||
+        !this.order.lastName ||
+        !this.order.Address ||
+        !this.order.City ||
+        !this.order.State ||
+        !this.order.Zip
+    ) {
+        alert("Please fill in all the required fields before submitting your order.");
+        return;
+    }
 
-                    // Prepare order details
-                    const orderDetails = {
-                        customer: {
-                            firstName: this.order.firstName,
-                            lastName: this.order.lastName,
-                            address: this.order.Address,
-                            city: this.order.City,
-                            state: this.order.State,
-                            zip: this.order.Zip,
-                            method: this.order.method,
-                            gift: this.order.gift,
-                        },
-                        cart: this.cart,
-                        total: this.totalPrice,
-                    };
+    // Prepare order details
+    const orderDetails = {
+        customer: {
+            firstName: this.order.firstName,
+            lastName: this.order.lastName,
+            address: this.order.Address,
+            city: this.order.City,
+            state: this.order.State,
+            zip: this.order.Zip,
+            method: this.order.method,
+            gift: this.order.gift,
+        },
+        cart: this.cart,
+        total: this.totalPrice,
+    };
 
-                    try {
-                        // Submit order to the backend
-                        const response = await fetch(
-                            "https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Orders",
-                            {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify(orderDetails),
-                            }
-                        );
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            alert("Order placed successfully: " + data.message);
-
-                            // Update available slots after order is placed
-                            for (const product of this.cart) {
-                                const updatedSlots = product.availableslots - product.quantity;
-                                if (updatedSlots >= 0) {
-                                    await fetch(
-                                        `https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson`,
-                                        {
-                                            method: "PUT",
-                                            headers: {
-                                                "Content-Type": "application/json",
-                                            },
-                                            body: JSON.stringify({ availableslots: updatedSlots }),
-                                        }
-                                    );
-                                }
-                            }
-
-                            // Clear cart and reset order
-                            this.cart = [];
-                            this.order = {
-                                firstName: "",
-                                lastName: "",
-                                Address: "",
-                                City: "",
-                                State: "",
-                                Zip: "",
-                                method: "Home",
-                                gift: false,
-                            };
-
-                            // Fetch updated lessons or products
-                            await this.getLessons();
-                        } else {
-                            const errorData = await response.json();
-                            alert("Error placing order: " + errorData.message);
-                        }
-                    } catch (error) {
-                        console.error("Error submitting order:", error);
-                        alert("An error occurred while placing the order.");
-                    }
+    try {
+        // Submit order to the backend
+        const response = await fetch(
+            "https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Orders",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
+                body: JSON.stringify(orderDetails),
+            }
+        );
+
+        if (response.ok) {
+            const data = await response.json();
+            alert("Order placed successfully: " + data.message);
+
+            // Update available slots after order is placed
+            for (const product of this.cart) {
+                const updatedSlots = product.availableslots - product.quantity;
+                if (updatedSlots >= 0) {
+                    await fetch(
+                        `https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ availableslots: updatedSlots }),
+                        }
+                    );
+                }
+            }
+
+            // Clear cart and reset order
+            this.cart = [];
+            this.order = {
+                firstName: "",
+                lastName: "",
+                Address: "",
+                City: "",
+                State: "",
+                Zip: "",
+                method: "Home",
+                gift: false,
+            };
+
+            // Fetch updated lessons or products
+            await this.getLessons();
+
+            // Navigate back to the items page
+            this.showProduct = true; // Switch back to the product page
+        } else {
+            const errorData = await response.json();
+            alert("Error placing order: " + errorData.message);
+        }
+    } catch (error) {
+        console.error("Error submitting order:", error);
+        alert("An error occurred while placing the order.");
+    }
+},
                 // Function to match search query
                 matchesSearch(product) {
                     const query = this.searchQuery.trim();
