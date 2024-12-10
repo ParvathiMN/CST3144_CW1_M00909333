@@ -259,7 +259,15 @@
                 showCheckout() {
                     this.showProduct = !this.showProduct;
                 },
+                //Submit order fetch 
                 async submitOrder() {
+                    // Check for missing fields in the order form
+                    if (!this.order.firstName || !this.order.lastName || !this.order.Address || !this.order.City || !this.order.State || !this.order.Zip) {
+                        alert("Please fill in all the details.");
+                        return; // Prevent further execution if the form is incomplete
+                    }
+
+                    // Proceed with order submission if the form is complete
                     const orderDetails = {
                         customer: {
                             firstName: this.order.firstName,
@@ -317,6 +325,7 @@
                         alert('An error occurred while placing the order.');
                     }
                 },
+
                 matchesSearch(product) {
                     const query = this.searchQuery.trim().toLowerCase();
                     if (!query) {
