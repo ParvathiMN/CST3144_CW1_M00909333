@@ -307,22 +307,23 @@
             const data = await response.json();
             alert("Order placed successfully: " + data.message);
 
-            // Update available slots after order is placed
+           // Update available slots after order is placed
             for (const product of this.cart) {
-                const updatedSlots = product.availableslots - product.quantity;
-                if (updatedSlots >= 0) {
-                    await fetch(
-                        `https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson`,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ availableslots: updatedSlots }),
-                        }
-                    );
-                }
+    const updatedSlots = product.availableslots - product.quantity;
+    if (updatedSlots >= 0) {
+        await fetch(
+            `https://m00909333-cst3144-backend-577777-bphr.onrender.com/collection/Lesson/${product._id}`, // Include the product ID
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ availableslots: updatedSlots }),
             }
+        );
+    }
+}
+
 
             // Clear cart and reset order
             this.cart = [];
@@ -341,7 +342,7 @@
             await this.getLessons();
 
             // Navigate back to the items page
-            this.showProduct = true; // Switch back to the product page
+            this.showProduct = true; 
         } else {
             const errorData = await response.json();
             alert("Error placing order: " + errorData.message);
