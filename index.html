@@ -16,15 +16,14 @@
             <h1>{{ sitename }}</h1>
             <!-- Search Bar -->
             <div class="search-bar">
-                <input v-model="searchQuery" placeholder="Search for Lessons..." @input="matchesSearch"
-                    class="search-input" />
+                <input v-model="searchQuery" placeholder="Search for Lessons..." @input="matchesSearch" class="search-input" />
                 <button v-on:click="matchesSearch" class="search-button">
                     <span class="fas fa-search"> Search</span>
                 </button>
             </div>
 
             <!-- Disable checkout button when cart is empty -->
-            <button v-on:click="showCheckout" v-bind:disabled="cartItemCount === 0">
+            <button v-on:click="showCheckout" v-bind:disabled="cartItemCount === 0 && showProduct" :class="{disabled= cartItemCount === 0 && showProduct}">
                 {{ cartItemCount }}
                 <span class="fas fa-cart-plus"> Checkout</span>
             </button>
