@@ -215,7 +215,7 @@
                         }
                         const lessons = await response.json();
                         console.log('Lessons:', lessons);
-                        this.products = lessons; // Store lessons in your Vue data
+                        this.products = lessons; // Store lessons in Vue data
                     } catch (error) {
                         console.error('Error fetching lessons:', error);
                     }
@@ -250,8 +250,6 @@
                         }
                     }
                 },
-
-
                 canAddToCart(product) {
                     return product.availableslots > 0;
                 },
@@ -322,8 +320,6 @@
         );
     }
 }
-
-
             // Clear cart and reset order
             this.cart = [];
             this.order = {
